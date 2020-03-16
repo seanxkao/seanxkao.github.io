@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="簡介Alpha合成是影像處理和遊戲裡很常見的功能。利用alpha合成，可以將多張圖片合併到同一個畫面，也可以實現圖片的漸變。例如在FlipTale裡，玩家執行「翻面」時，所有的背景圖都會變色。   不過新手在用alpha合成時，常常會因為不清楚原理而作出意料之外的結果。就拿剛才那個「變色」當例子吧。假設我們想要將圖A漸變成圖B，該怎麼做？(圖層B的在圖層A前面)很多人會這麼作： 將圖A的alpha">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Alpha合成的錯誤打開方式">
+<meta property="og:url" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;index.html">
+<meta property="og:site_name" content="技術長的垃圾堆">
+<meta property="og:description" content="簡介Alpha合成是影像處理和遊戲裡很常見的功能。利用alpha合成，可以將多張圖片合併到同一個畫面，也可以實現圖片的漸變。例如在FlipTale裡，玩家執行「翻面」時，所有的背景圖都會變色。   不過新手在用alpha合成時，常常會因為不清楚原理而作出意料之外的結果。就拿剛才那個「變色」當例子吧。假設我們想要將圖A漸變成圖B，該怎麼做？(圖層B的在圖層A前面)很多人會這麼作： 將圖A的alpha">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;tree.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;alpha_fail.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;chino.jpeg">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;thonk.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;test_t_without_alpha.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;test_t_with_alpha.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;test_alpha.gif">
+<meta property="og:updated_time" content="2019-11-24T16:11:27.062Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;11&#x2F;24&#x2F;alpha-blending-1&#x2F;tree.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://seanxkao.github.io/2019/11/24/alpha-blending-1/"/>
+
+
+
+
+
+  <title>Alpha合成的錯誤打開方式 | 技術長的垃圾堆</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">技術長的垃圾堆</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一些奇怪的Unity心得</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            歸檔
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://seanxkao.github.io/2019/11/24/alpha-blending-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hane">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技術長的垃圾堆">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Alpha合成的錯誤打開方式</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2019-11-24T16:55:44+08:00">
+                2019-11-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h2><p>Alpha合成是影像處理和遊戲裡很常見的功能。<br>利用alpha合成，可以將多張圖片合併到同一個畫面，也可以實現圖片的漸變。<br>例如在FlipTale裡，玩家執行「翻面」時，所有的背景圖都會變色。</p>
+<img src="/2019/11/24/alpha-blending-1/tree.gif" class="">
+
+<p>不過新手在用alpha合成時，常常會因為不清楚原理而作出意料之外的結果。<br>就拿剛才那個「變色」當例子吧。假設我們想要將圖A漸變成圖B，該怎麼做？(圖層B的在圖層A前面)<br>很多人會這麼作：</p>
+<p>將圖A的alpha值從1漸變成0<br>將圖B的alpha值從0漸變成1</p>
+<p>但很抱歉，如果這樣寫的話，在漸變到一半(50%)時你就會看到這個畫面：</p>
+<img src="/2019/11/24/alpha-blending-1/alpha_fail.png" class="">
+
+<p>樹變成透明了，嗚嗚嗚嗚嗚。</p>
+<h2 id="Alpha合成的原理"><a href="#Alpha合成的原理" class="headerlink" title="Alpha合成的原理"></a>Alpha合成的原理</h2><p>哪裡出錯了？漸變到一半的時候圖A和圖B的alpha值都是50%，那麼不是應該是AB各半嗎？<br>為了知道為什麼出錯，我們得來了解一下alpha合成的原理。</p>
+<p>首先alpha合成的數學公式為：<br>$$ c = \alpha \cdot c_f + (1-\alpha) \cdot c_b $$<br>其中c是最終的顏色，$c_f$是前景色，$c_b$是背景色，$\alpha$則是alpha值。<br>可以看出來，alpha合成的運作方式是「將背景色和前景色以加權的方式混合」。<br>前景色的權重是$\alpha$，而背景色的權重是$1-\alpha$。</p>
+<p>然後重點來了：每次電腦繪製一張圖片的時候，它會將圖片與背景作alpha合成。<br>並且「混合的結果會寫入背景，作為下一次alpha合成的背景色」。</p>
+<p>光這樣講可能還是難以想像，那麼我們實際來套套看alpha合成的公式，來檢查剛才出錯的例子吧。</p>
+<p>首先，電腦繪製出背景。<br>接下來畫圖A，圖A的alpha值是0.5，因此電腦將前景與背景以各50%的比例混合。<br>因此這時的結果是「50%背景色、50%圖A顏色」。<br>接下來再繪製圖B，圖B的Alpha也是0.5，因此電腦將前景與背景以各50%的比例混合。<br>但因為現在的背景是剛才混合的結果，因此最終的結果是「50%圖B、25%圖A、25%背景」。</p>
+<p>發現了嗎？背景並沒有消失，他還有25%。所以我們才會看到背景。</p>
+<h2 id="漸變參數"><a href="#漸變參數" class="headerlink" title="漸變參數"></a>漸變參數</h2><p>我們換個角度來思考。<br>會出現這個錯誤，其實是因為alpha值實在太不直觀了，導致我們很容易想錯。<br>我們不如試試看用人腦比較能理解的數值來取代alpha值。</p>
+<p>Alpha合成的順序是「圖A跟背景混合」，再來「圖B跟剛才的結果混合」。<br>假設改成「圖A跟圖B混合」，再「將剛才的結果跟背景混合」，是不是直觀多了？<br>因此我們這邊來定義新的參數吧。</p>
+<p><strong>漸變度t</strong><br>代表合成圖是比較接近圖A還是圖B。圖A擁有1-t的權重，圖B則擁有t的權重。</p>
+<p><strong>整體透明度$\alpha$</strong><br>代表「整張合成圖」的alpha值。也就是說，合成圖擁有$\alpha$的權重，背景色擁有$1-\alpha$的權重。</p>
+<p>這個方法的好處是，我們可以把圖A跟圖B當成一張圖來思考。<br>我們只需要管這張圖的alpha值，以及它介於圖A跟圖B之間的係數就好，比兩個alpha值容易理解得多。</p>
+<h2 id="實現方法"><a href="#實現方法" class="headerlink" title="實現方法"></a>實現方法</h2><p>用t跟$\alpha$作為參數，等於是改變計算alpha合成的順序。<br>也就是先用t作為alpha值，將圖A跟圖B作第一次合成，再用$\alpha$作為alpha值，將混合圖跟背景進行第二次合成。</p>
+<p>但問題是我們沒辦法改變alpha合成的順序啊？我們該怎麼用t跟alpha來兜出我們要的混合圖呢？</p>
+<p>方法有兩個。</p>
+<p>第一個方法很簡單，寫shader就可以了。</p>
+<img src="/2019/11/24/alpha-blending-1/chino.jpeg" class="">
+
+<p>拜託，現在已經有ShaderGraph，讓你不用寫code就可以作shader了，可以不要這樣看我嗎？<br>不過事實上當初我寫FlipTale時我也不會shader，因此今天就是要分享當初我是怎麼解決的。</p>
+<p>第二個方法，簡單來說就是硬爆。</p>
+<p>我們知道，不寫shader是不可能改變alpha合成的規則的。<br>那麼如果我們知道我們想要的圖A、圖B、背景的比例，能不能用這個比例來倒推出那兩個機車的alpha該設多少，圖片才會看起來跟我們想的一樣呢？</p>
+<p>首先我們把需要的參數都列出來：<br>$c_a$：圖A的顏色<br>$c_b$：圖B的顏色<br>$\alpha_a$：圖A的alpha值<br>$\alpha_b$：圖B的alpha值<br>$b$：背景色</p>
+<p>我們的目標是用t跟%\alpha%解出$\alpha_a$跟$\alpha_b$。</p>
+<p>首先，我們用t跟$\alpha$算出我們想要的圖A、圖B、背景顏色的比例。</p>
+<p>先將圖A跟圖B混合：<br>$$ c_1 = (1-t) \cdot c_a + t \cdot c_b $$<br>再將剛才的結果跟背景混合：<br>$$ c_2 = \alpha \cdot c_1 + (1-\alpha) \cdot b $$<br>將$c_1$代進來，得到：<br>$$ c_2 = (1-t)\alpha \cdot c_a + t \alpha \cdot c_b + (1-\alpha) \cdot b $$</p>
+<p>接下來，我們來計算標準的alpha合成，圖A、圖B、背景各自的比例：</p>
+<p>先將圖A跟背景混合：<br>$$ c_1 = \alpha_a \cdot c_a + (1-\alpha_a) \cdot b $$<br>再將圖B跟剛才的結果混合：<br>$$ c_2 = \alpha_b \cdot c_b + (1-\alpha_b) \cdot c_1 $$<br>整理一下，得到<br>$$ c_2 = \alpha_a (1-\alpha_b) \cdot c_a + \alpha_b \cdot c_b + (1-\alpha_a)(1-\alpha_b) \cdot b $$</p>
+<p>來比較兩次的結果吧。為了能夠用t跟$\alpha$精確控制顏色的比例，兩次的結果中$c_a$跟$c_b$和$b$前面乘的係數必須相等。</p>
+<p>$c_a$係數相等，給我們這個條件：<br>$$ (1-t) \alpha = \alpha_a(1-\alpha_b)$$<br>$c_b$係數相等，給我們這個條件：<br>$$ t \alpha = \alpha_b$$</p>
+<p>背景色還會給我們一條方程式，但因為未知數只有兩個，所以兩條式子就夠了。<br>然後一看第二條式子，發現…$\alpha_b$已經自動被解出來了，爽啊.jpg。<br>$$ \alpha_b = t \alpha$$<br>代回去第一條式子，解出$\alpha_a$<br>$$ \alpha_a = \frac{(1-t) \alpha}{(1-t \alpha)}$$</p>
+<p>最後，我們就得到用t跟$\alpha$來表示$\alpha_a$跟$\alpha_b$的公式了。<br>$$ \alpha_a = \frac{(1-t) \alpha}{(1-t \alpha)}, \quad \alpha_b = t \alpha$$</p>
+<h2 id="測試與驗證"><a href="#測試與驗證" class="headerlink" title="測試與驗證"></a>測試與驗證</h2><img src="/2019/11/24/alpha-blending-1/thonk.png" class="">
+<p>嗯…解出來是很棒啦，不過我們怎麼知道對不對？</p>
+<p>我們大可寫個code來測試結果對不對，但我們姑且先代個簡單的數字進去檢查看看吧。<br>這邊只檢查一個情況，那就是alpha=1時，背景是否絕對不會透出來。</p>
+<p>把alpha=1代進去上面的公式，得到：<br>$$ \alpha_a = 1, \quad \alpha_b = t $$</p>
+<p>也就是說，如果我們只希望作漸變(t=0 -&gt; t=1)，我們圖A的alpha值應該從頭到尾都是1。<br>這很合理，因為只要圖A的alpha值不是1，那我們將圖A跟背景混合時背景就會透出來，這麼一來我們作漸變時無論如何都無法避免背景透出來。</p>
+<p>既然看起來還算對(?)，我們就用程式來驗證吧。以下是調整t跟$\alpha$的一些畫面。</p>
+<p>測試alpha=1時改變t：</p>
+<img src="/2019/11/24/alpha-blending-1/test_t_without_alpha.gif" class="">
+
+<p>測試alpha=0.5時改變t：</p>
+<img src="/2019/11/24/alpha-blending-1/test_t_with_alpha.gif" class="">
+
+<p>測試t=1時改變alpha：</p>
+<img src="/2019/11/24/alpha-blending-1/test_alpha.gif" class="">
+
+<p>這樣就可以用t跟$\alpha$控制圖片的混合程度了。</p>
+<p>結論：<br>這個故事告訴我們，一定要學shader。<br>否則哪一天要是你要調整10張圖片的比例，你就要算半天那個奇怪的公式……</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/22/first-post/" rel="next" title="開站">
+                <i class="fa fa-chevron-left"></i> 開站
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/12/01/coroutine-1/" rel="prev" title="支援中斷事件的Coroutine">
+                支援中斷事件的Coroutine <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Hane</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#簡介"><span class="nav-number">1.</span> <span class="nav-text">簡介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Alpha合成的原理"><span class="nav-number">2.</span> <span class="nav-text">Alpha合成的原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#漸變參數"><span class="nav-number">3.</span> <span class="nav-text">漸變參數</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#實現方法"><span class="nav-number">4.</span> <span class="nav-text">實現方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#測試與驗證"><span class="nav-number">5.</span> <span class="nav-text">測試與驗證</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hane</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

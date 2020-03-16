@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="簡介內插法是一種用離散的數據點產生連續變化的辦法。它是遊戲中最常見的數學工具之一。可以說沒有它的話，遊戲根本做不成。 為什麼？舉個例子，骨架動畫不是有關鍵影格嗎？在作動畫時只要定義關鍵影格的角色動作，中間的動作就會因某種神奇力量自動出現…才怪。事實上，兩個關鍵影格之間的動作就是內插出來的。也就是說，假如不用內插法，我們就得手動設定每一禎所有骨頭的角度。作過的人應該知道這是多麼星爆的一件事… 不只是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="兩點間的內插">
+<meta property="og:url" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;index.html">
+<meta property="og:site_name" content="技術長的垃圾堆">
+<meta property="og:description" content="簡介內插法是一種用離散的數據點產生連續變化的辦法。它是遊戲中最常見的數學工具之一。可以說沒有它的話，遊戲根本做不成。 為什麼？舉個例子，骨架動畫不是有關鍵影格嗎？在作動畫時只要定義關鍵影格的角色動作，中間的動作就會因某種神奇力量自動出現…才怪。事實上，兩個關鍵影格之間的動作就是內插出來的。也就是說，假如不用內插法，我們就得手動設定每一禎所有骨頭的角度。作過的人應該知道這是多麼星爆的一件事… 不只是">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;linear.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;accel.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;decel.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;acceldecel.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;inspector.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;move_linear.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;move_accel.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;move_decel.gif">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;move_acceldecel.gif">
+<meta property="og:updated_time" content="2020-03-16T14:04:49.672Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;16&#x2F;interpolation-0&#x2F;linear.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://seanxkao.github.io/2020/03/16/interpolation-0/"/>
+
+
+
+
+
+  <title>兩點間的內插 | 技術長的垃圾堆</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">技術長的垃圾堆</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一些奇怪的Unity心得</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            歸檔
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://seanxkao.github.io/2020/03/16/interpolation-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hane">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技術長的垃圾堆">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">兩點間的內插</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2020-03-16T03:30:46+08:00">
+                2020-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h2><p>內插法是一種用離散的數據點產生連續變化的辦法。<br>它是遊戲中最常見的數學工具之一。可以說沒有它的話，遊戲根本做不成。</p>
+<p>為什麼？舉個例子，骨架動畫不是有關鍵影格嗎？<br>在作動畫時只要定義關鍵影格的角色動作，中間的動作就會因某種神奇力量自動出現…才怪。<br>事實上，兩個關鍵影格之間的動作就是內插出來的。<br>也就是說，假如不用內插法，我們就得手動設定每一禎所有骨頭的角度。<br>作過的人應該知道這是多麼星爆的一件事…</p>
+<p>不只是動畫，甚至連軌跡曲線、圖片的旋轉等等都是用內插實現的。<br>你能想像一張圖片得存各種旋轉角度、各種尺寸的版本嗎？<br>這樣大概一堆遊戲的容量都是10G起跳了。</p>
+<p>因此內插法節省了我們很多工夫。<br>它讓我們在記錄一個連續過程時，不需要紀錄所有中間狀態，只要存下關鍵的幾個的資料點就好。<br>今天因為是系列的第一篇，就先來介紹最簡單的情況，也就是兩點間的內插。</p>
+<h2 id="內插函數的性質"><a href="#內插函數的性質" class="headerlink" title="內插函數的性質"></a>內插函數的性質</h2><p>遊戲中的內插函數通常不會太複雜，一般都是多項式或常見函數的組合。<br>這是為了追求計算快，形式簡單。</p>
+<p>如果是3D建模的軟體，可能還會考慮稍微複雜的函數來讓形狀好看點。<br>例如3D曲面有時會使用<a href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%9D%87%E5%8C%80%E6%9C%89%E7%90%86B%E6%A0%B7%E6%9D%A1" target="_blank" rel="noopener">NURBS函數</a>。<br>但遊戲中的內插往往是每禎都要計算一次，所以不太可能用太複雜的演算法來算。</p>
+<p>此外，簡單的函數控制起來也比較容易。<br>在選擇內插函數時，通常會對函數曲線的形狀有特定的要求。<br>比如起步時是加速還是減速，曲線有多陡峭，以及過程有沒有抖動…等等。<br>因此能方便的控制速度跟加速度的函數，當然是再適合不過了。</p>
+<p>內插函數大多都是連續函數。<br>這是因為內插多半是為了來作平滑化，就像如上面提到的漸變動畫和軌跡曲線一樣。<br>你可以試著把一個滑順的動畫錄下來慢動作撥放，會發現每個影格間變化的程度一定不會太大。<br>這也就是為什麼我們常常規定內插函數要連續，甚至是多次微分連續。</p>
+<h2 id="內插函數介紹"><a href="#內插函數介紹" class="headerlink" title="內插函數介紹"></a>內插函數介紹</h2><p>內插函數的種類非常多。<br>不過為了簡單起見，今天只介紹最常見的幾個。</p>
+<p>這邊先定義一些名詞。<br>起始值：s<br>終止值：d<br>時刻：t，介於0到1之間。t越接近0則輸出越接近s，越接近1則輸出越接近d。<br>內插函數：f(s, d, t)，給定「起始值」，「終止值」以及之間的「時刻」，輸出對應的「內插值」。</p>
+<p><strong>線性內插</strong><br>$$f(s, d, t) = s + (d-s)*t$$</p>
+<img src="/2020/03/16/interpolation-0/linear.png" class="">
+
+<p>毫無反應，就是一條線。<br>但這個函數滿足內插函數最基本的要求：t=0時輸出為s，t=1時輸出為d的性質。<br>因此是最常用的內插函數。在內插時如果對函數形狀沒有特別需求，通常都會用線性內插解決。</p>
+<p><strong>加速內插</strong><br>$$f(s, d, t) = s + (d-s)*t^N$$</p>
+<img src="/2020/03/16/interpolation-0/accel.png" class="">
+
+<p>其中N越大加速的幅度越大。<br>由於結束的瞬間會忽然停下，通常是用來當滑出畫面的動畫。</p>
+<p><strong>減速內插</strong><br>$$f(s, d, t) = s + (d-s)*(1-(1-t)^N)$$</p>
+<img src="/2020/03/16/interpolation-0/decel.png" class="">
+
+<p>其中N越大減速的幅度越大。<br>可以看出來其實就是很偷懶的，把加速內插的圖形轉180度。<br>由於開始的瞬間很突然，通常會拿來做滑進畫面的動畫。</p>
+<p><strong>先加速後減速內插</strong><br>$$f(s, d, t) = s + (d-s) * \frac{1+cos(\pi*(1+t))}{2} $$</p>
+<img src="/2020/03/16/interpolation-0/acceldecel.png" class="">
+
+<p>他的名字叫AccelerateDecelerateInterpolator，可以說是Android開發者的惡夢。<br>名字長到驚天地泣鬼神，完美的展現為什麼大家討厭Java。<br>(我甚至懶得打這一串，這是直接從Android的頁面複製過來的)</p>
+<p>有些人應該已經看出來了，這些不同的內插函數其實有著相同的形式：<br>$$f(s, d, t) = s + (d-s)*g(t)$$<br>g(t)是一個介於0和1的函數。<br>也就是說我們其實可以將相同的部分提出，只留下g(t)，這個動作稱為歸一化。<br>歸一化後的內插函數稱作歸一內插函數。</p>
+<p>歸一化帶給我們很多好處。<br>首先因為輸出範圍變成了0到1，處理起來很方便。<br>我們可以任意組合兩個歸一內插函數，會得到另一個歸一內插函數。<br>並且經過任意的縮放和平移，可以把歸一內插函數變成任兩個值之間的內插函數。</p>
+<p>以下是上面提到的內插函數的歸一化版本：</p>
+<p>線性內插：<br>$$g(t) = t$$</p>
+<p>加速內插：<br>$$g(t) = t^N$$</p>
+<p>減速內插：<br>$$g(t) = 1-(1-t)^N$$</p>
+<p>先加速後減速內插<br>$$g(t) = \frac{1+cos(\pi*(1+t))}{2} $$<br>抱歉…你就算歸一化還是很醜= =</p>
+<h2 id="內插函數的程式實作"><a href="#內插函數的程式實作" class="headerlink" title="內插函數的程式實作"></a>內插函數的程式實作</h2><p>這邊以一個遊戲中最常碰到的問題「如何將物體從A點順暢的移到B點」<br>來示範Unity如何實作內插函數，以及各個內插函數的使用效果。</p>
+<p>Unity自己有實作未歸一化的線性內插函數，也就是有名的Mathf.Lerp。<br>$$Lerp(s, d, t) = s + (d-s)*t$$</p>
+<p>看看這東西…長得是不是很熟悉？<br>這個東西其實就是剛才提到的，所有內插函數的共通形式。<br>只要把指定的歸一化內插函數g(t)塞進t的位置，它就變成原本的內插函數f(t)了。<br>這一點大家可以自己代代看來驗證。</p>
+<p>那麼，我們來實作剛才提到的幾個歸一化內插函數g(t)吧。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Interpolator</span>&#123;</span><br><span class="line">    <span class="comment">// 線性內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Linear</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 加速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Accel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Mathf.Pow(t, <span class="number">4</span>);</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 減速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Decel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>-Mathf.Pow(<span class="number">1</span>-t, <span class="number">4</span>);</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 先加速後減速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">AccelDecel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">1</span>+Mathf.Cos(Mathf.PI*(<span class="number">1</span>+t)))*<span class="number">0.5f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下來來實作內插動畫的函數。<br>用程式產生動畫，自然少不了coroutine。<br>這邊的實作方式是在指定的時間內，每個frame都計算目前時間對應到的內插值，再用內插值來更新物件狀態。<br>結束的時候再更新一次狀態，以確保結束的狀態正確。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Interpolation</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerator <span class="title">Transition</span>(<span class="params"><span class="keyword">float</span> src, <span class="keyword">float</span> dst, <span class="keyword">float</span> duration, Func&lt;<span class="keyword">float</span>, <span class="keyword">float</span>&gt; interpolator, Action&lt;<span class="keyword">float</span>&gt; onUpdate</span>)</span> &#123;</span><br><span class="line">        <span class="keyword">float</span> time = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> (time &lt; duration)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">float</span> t = interpolator(time/duration);</span><br><span class="line">            <span class="keyword">float</span> current = Mathf.Lerp(src, dst, t);</span><br><span class="line">            onUpdate(current);</span><br><span class="line">            time += Time.deltaTime;</span><br><span class="line">            <span class="keyword">yield</span> <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        onUpdate(dst);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>src是初始值，dst是結束值，duration是動畫的長度。<br>這個函式會在給定的時間內使一個數值從src變化成dst。</p>
+<p>這邊最重要的就是interpolator跟onUpdate兩個參數。<br>interpolator是我們想指定的歸一化內插函數。把它餵給Lerp後，就變成了任意兩個值之間的內插函數。<br>而onUpdate則負責更新遊戲物件的狀態，它會取得該時刻的內插值，再根據內插值來設定物件的狀態。</p>
+<p>這邊補充一下，剛接觸C#的人可能看不太懂這兩個參數的型別。<br>這兩個參數實際上都是「函數」。<br>Action<float>代表「參數是一個float的函數，沒有回傳值的函數」。<br>Func&lt;float, float&gt;代表「輸入是一個float，回傳值也是float函數」。</p>
+<p>這邊之所以要大費周章的把函數從外面傳進來，而不是寫在內插動畫裡，是為了能重複利用Transition這個函數。<br>要是我們哪天不想作位移動畫了，而是想要做變色的動畫，<br>我們就只需要把onUpdate改成一個設定顏色的函數就好了，完全不用改Transition。<br>Action和Func都屬於Delegate的概念，以後有機會會在其他文章補充。</p>
+<p>以下則是實際呼叫動畫函數的腳本。這個物件會在遊戲開始時，會從指定的起始位置移動到結束位置。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">Player</span> : <span class="title">MonoBehaviour</span> &#123;</span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="keyword">private</span> <span class="keyword">float</span> _srcX;</span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="keyword">private</span> <span class="keyword">float</span> _dstX;</span><br><span class="line">    [<span class="meta">SerializeField</span>] <span class="keyword">private</span> <span class="keyword">float</span> _duration;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span> (<span class="params"></span>)</span> &#123;</span><br><span class="line">        StartCoroutine(Interpolation.Transition(_srcX, _dstX, _duration, Interpolator.Linear, UpdatePosX));</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UpdatePosX</span>(<span class="params"><span class="keyword">float</span> x</span>)</span></span><br><span class="line"><span class="function"></span>    &#123;</span><br><span class="line">        Vector3 pos = transform.position;</span><br><span class="line">        pos.x = x;</span><br><span class="line">        transform.position = pos;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>為了方便，起始位置、結束位置和時間長都可以在編輯器裡設定。</p>
+<img src="/2020/03/16/interpolation-0/inspector.png" class="">
+
+<p>這邊展示一下各個內插函數的移動效果。</p>
+<p>線性內插：</p>
+<img src="/2020/03/16/interpolation-0/move_linear.gif" class="">
+
+<p>加速內插：</p>
+<img src="/2020/03/16/interpolation-0/move_accel.gif" class="">
+
+<p>減速內插：</p>
+<img src="/2020/03/16/interpolation-0/move_decel.gif" class="">
+
+<p>先加速後減速內插：</p>
+<img src="/2020/03/16/interpolation-0/move_acceldecel.gif" class="">
+
+
+<h2 id="進階補充：Delegate小技巧"><a href="#進階補充：Delegate小技巧" class="headerlink" title="進階補充：Delegate小技巧"></a>進階補充：Delegate小技巧</h2><p>如果你希望能設定加速和減速的幅度呢？<br>這邊可以寫成兩個變數。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Accel</span>(<span class="params"><span class="keyword">float</span> t, <span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Mathf.Pow(t, rate);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Decel</span>(<span class="params"><span class="keyword">float</span> t, <span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>-Mathf.Pow(<span class="number">1</span>-t, rate);</span><br><span class="line">&#125;	</span><br></pre></td></tr></table></figure>
+
+<p>但問題來了：interpolator參數的型別是Func&lt;float, float&gt;，不能塞兩個參數的函數。<br>這時我們可以用lambda包裝它</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">t =&gt; Accel(t, rate)</span><br></pre></td></tr></table></figure>
+
+
+<p>最後就變成：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Accel</span>(<span class="params"><span class="keyword">float</span> t, <span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> Mathf.Pow(t, rate);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Func&lt;<span class="keyword">float</span>, <span class="keyword">float</span>&gt; <span class="title">Accel</span>(<span class="params"><span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> t =&gt; Accel(t, rate);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Decel</span>(<span class="params"><span class="keyword">float</span> t, <span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1</span>-Mathf.Pow(<span class="number">1</span>-t, rate);</span><br><span class="line">&#125;	</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Func&lt;<span class="keyword">float</span>, <span class="keyword">float</span>&gt; <span class="title">Decel</span>(<span class="params"><span class="keyword">float</span> rate</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> t =&gt; Decel(t, rate);</span><br><span class="line">&#125;	</span><br></pre></td></tr></table></figure>
+
+<p>使用上大概會是這樣：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    StartCoroutine(Transition(startPoint, endPoint, <span class="number">3</span>, Interpolator.Accel(<span class="number">3</span>), UpdatePosX));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>這裡代表使用了加速程度是3的加速內插函數。</p>
+<h2 id="補充"><a href="#補充" class="headerlink" title="補充"></a>補充</h2><p>內插函數大抄：<a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a><br>內插函數生成器：<a href="http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm" target="_blank" rel="noopener">http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/12/01/coroutine-1/" rel="next" title="支援中斷事件的Coroutine">
+                <i class="fa fa-chevron-left"></i> 支援中斷事件的Coroutine
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Hane</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#簡介"><span class="nav-number">1.</span> <span class="nav-text">簡介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#內插函數的性質"><span class="nav-number">2.</span> <span class="nav-text">內插函數的性質</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#內插函數介紹"><span class="nav-number">3.</span> <span class="nav-text">內插函數介紹</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#內插函數的程式實作"><span class="nav-number">4.</span> <span class="nav-text">內插函數的程式實作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#進階補充：Delegate小技巧"><span class="nav-number">5.</span> <span class="nav-text">進階補充：Delegate小技巧</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#補充"><span class="nav-number">6.</span> <span class="nav-text">補充</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hane</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

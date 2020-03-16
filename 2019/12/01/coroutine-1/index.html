@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-tw">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT" />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="簡介今天在處理上一代社長Prefab的遺產。   這是一個用Unity作的簡單的GalGame引擎，不過目前只有播放五句話的功能。分別是「AAAAAAA」、「BBBBBBB」、「CCCCCCCCC」、「DDDDDD」以及「EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE」   為什麼最後一句特別長呢？因為我想要測">
+<meta property="og:type" content="article">
+<meta property="og:title" content="支援中斷事件的Coroutine">
+<meta property="og:url" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;index.html">
+<meta property="og:site_name" content="技術長的垃圾堆">
+<meta property="og:description" content="簡介今天在處理上一代社長Prefab的遺產。   這是一個用Unity作的簡單的GalGame引擎，不過目前只有播放五句話的功能。分別是「AAAAAAA」、「BBBBBBB」、「CCCCCCCCC」、「DDDDDD」以及「EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE」   為什麼最後一句特別長呢？因為我想要測">
+<meta property="og:locale" content="zh-tw">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;galgame_demo.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;galgame_play.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;thonk.png">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;platelet.jpg">
+<meta property="og:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;tmp.png">
+<meta property="og:updated_time" content="2019-11-30T19:51:24.792Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2019&#x2F;12&#x2F;01&#x2F;coroutine-1&#x2F;galgame_demo.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://seanxkao.github.io/2019/12/01/coroutine-1/"/>
+
+
+
+
+
+  <title>支援中斷事件的Coroutine | 技術長的垃圾堆</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-tw">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">技術長的垃圾堆</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">一些奇怪的Unity心得</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首頁
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            歸檔
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://seanxkao.github.io/2019/12/01/coroutine-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hane">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技術長的垃圾堆">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">支援中斷事件的Coroutine</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2019-12-01T00:05:14+08:00">
+                2019-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h2><p>今天在處理上一代社長Prefab的遺產。</p>
+<img src="/2019/12/01/coroutine-1/galgame_demo.png" class="">
+
+<p>這是一個用Unity作的簡單的GalGame引擎，不過目前只有播放五句話的功能。<br>分別是「AAAAAAA」、「BBBBBBB」、「CCCCCCCCC」、「DDDDDD」<br>以及「EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE」</p>
+<img src="/2019/12/01/coroutine-1/galgame_play.png" class="">
+
+<p>為什麼最後一句特別長呢？因為我想要測試一個功能，那就是在播放台詞時如果玩家按了按鍵，<br>就會中斷文字的動畫，直接顯示整句話。所以要有一句特別長來讓我不耐煩。</p>
+<p>顯示文字的動畫是一個coroutine。Prefab的做法是在StartCoroutine時把coroutine存在對話框的class裡面，<br>然後玩家如果在顯示到一半時按空白鍵，就直接呼叫StopCoroutine，然後直接顯示整句話。</p>
+<p>這個方法確實可以做到，不過仔細想想，玩家輸入按鍵時中斷動畫這個功能在遊戲中實在太常用了。<br>因此我們會希望這個這個函式不是對話框獨有的，而是一個在函式庫裡的函式。<br>它可以把一個coroutine變成能夠靠按鍵中斷。並且在中斷時，會執行某個特定的函式來直接跳躍過程，直達結果。</p>
+<p><strong>跳躍過程，直達結果。</strong></p>
+<p>如果我們有緋紅之王的話，就可以很輕鬆地做到這件事情。可惜我們沒有，那就只好寫code了。</p>
+<h2 id="用StopCoroutine實作"><a href="#用StopCoroutine實作" class="headerlink" title="用StopCoroutine實作"></a>用StopCoroutine實作</h2><p>我們來寫個class叫叫InputEventListener。顧名思義，就是一個會監聽玩家輸入的class。<br>它提供一個函式叫Run，玩家只要將coroutine跟中斷事件函式丟給它，它就會給你一個包裝好的，能中斷的coroutine。</p>
+<p>Run的實作方式基本上就是把對話框裡的code照搬過來。<br>首先就是呼叫StartCoroutine並把Coroutine存起來…</p>
+<p>…欸等一下，StartCoroutine是MonoBehaviour的函式，這邊沒辦法直接執行。</p>
+<p>嗯，好吧。這邊必須新增一個MonoBehaviour的輸入參數。看來函數的樣子沒辦法像當初想得那樣簡潔。</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> IEnumerator <span class="title">Run</span>(<span class="params">MonoBehaviour mono, IEnumerator e, Action onInput</span>)</span>;</span><br></pre></td></tr></table></figure>
+
+<p>接下來我們就在MonoBehaviour身上呼叫StartCoroutine，然後每個frame都檢查玩家是否有按下空白鍵。<br>如果玩家按下空白鍵，那麼我們就呼叫StopCoroutine，然後呼叫OnInput，也就是我們的中斷回呼函式。<br>如果沒有，就一直執行到coroutine結束為止。</p>
+<p>這也很簡單，我們只要用一個while區段，然後一直看coroutine.IsFinished是否為true就好…</p>
+<p>…欸等一下。</p>
+<p>…Coroutine好像沒有這個變數。</p>
+<img src="/2019/12/01/coroutine-1/thonk.png" class="">
+
+<p>……<br>冷靜，一定是我孤陋寡聞，記錯變數的名稱了。<br>畢竟Coroutine應該是包裝IEnumerator的class，理論上應該要有能夠知道是否結束的功能。<br>所以這時候當然就是要拿出工程師的兩大救星，google跟<br>StackOverflow(平抬)。</p>
+<p>(google中)</p>
+<p>結論。</p>
+<p>還真他媽沒有。</p>
+<img src="/2019/12/01/coroutine-1/platelet.jpg" class="">
+
+<p>…沒辦法了，只能自己開一個變數來偵測coroutine是否結束了。<br>這邊我們得再寫一個coroutine，在開始時將IsFinished設成false，然後結束時再設成true。<br>這樣就能用while迴圈偵測IsFinished然後進行處理了。</p>
+<p>最後的實現如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">InputEventListener</span></span><br><span class="line">	bool _isFinished = false;</span><br><span class="line">	Coroutine _coroutine = <span class="literal">null</span>;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">InputEventListener</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="keyword">private</span> IEnumerator _Run(IEnumerator e)&#123;</span><br><span class="line">		_isFinished = <span class="literal">false</span>;</span><br><span class="line">		<span class="keyword">yield</span> <span class="keyword">return</span> e;</span><br><span class="line">		_isFinished = <span class="literal">true</span>;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> IEnumerator <span class="title">Run</span>(<span class="params">MonoBehaviour mono, IEnumerator e, Action onInput</span>)</span>&#123;</span><br><span class="line">		_coroutine = mono.StartCoroutine(_Run(e));</span><br><span class="line">		<span class="keyword">while</span>(!_isFinished)&#123;</span><br><span class="line">			<span class="keyword">if</span>(Input.GetKeyDown(KeyCode.Space))&#123;</span><br><span class="line">				mono.StopCoroutine(_coroutine);</span><br><span class="line">				onInput.Invoke();</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span>&#123;</span><br><span class="line">				<span class="keyword">yield</span> <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>總覺得複雜度有點超出一開始的想像了。</p>
+<p>首先，需要的變數比想像中還要多。本來以為拿一個coroutine跟一個函式就好，<br>現在不但還要吃MonoBehaviour，還要自己處理IsFinished。</p>
+<p>而且這個方法還需要一個class，變成我們在呼叫Run之前還得作出一個class才行。<br>這邊不得不用class是因為IsFinished我們要讓Run裡面能取得IsFinished，但我們會希望每個可中斷coroutine有自己的IsFinished。</p>
+<p>可能有人想說用把_Run新增一個輸出參數就好了：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> IEnumerator _Run(IEnumerator e, <span class="keyword">out</span> <span class="keyword">bool</span> isFinished)&#123;</span><br><span class="line">	isFinished = <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">return</span> e;</span><br><span class="line">	isFinished = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>但問題是coroutine是不能用out的。所以如果真的想要用輸入參數來取得IsFinished的話，我們還得用自己把bool包起來：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class ResultHolder&lt;T&gt;&#123;</span><br><span class="line">	<span class="keyword">public</span> T Result &#123; <span class="keyword">get</span>; <span class="keyword">set</span>;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> IEnumerator _Run(IEnumerator e, ResultHolder&lt;<span class="keyword">bool</span>&gt; isFinished)&#123;</span><br><span class="line">	isFinished.Result = <span class="literal">false</span>;</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">return</span> e;</span><br><span class="line">	isFinished.Result = <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>怎麼感覺越寫越亂了，嘔嘔嘔嘔嘔。</p>
+<p><strong>這麼簡單的功能真的需要這麼複雜的方法實現嗎？</strong></p>
+<h2 id="自己手動跑Coroutine來實現"><a href="#自己手動跑Coroutine來實現" class="headerlink" title="自己手動跑Coroutine來實現"></a>自己手動跑Coroutine來實現</h2><p>我們回顧一下剛才碰到的麻煩。</p>
+<ol>
+<li>輸入牽扯到MonoBehaviour，增加依賴。日後要擴增功能會有隱憂。</li>
+<li>使用前還得實體化一個class，增加管理麻煩和記憶體負擔。</li>
+</ol>
+<p>追根究柢，就是Unity內建的Coroutine太雞巴了。不但StartCoroutine強制綁在MonoBehaviour身上，<br>而且Coroutine看起來明明像一個把IEnumerator包好的class，卻連「是否已結束」這種基本的功能都沒實作。<br>氣氣氣氣氣。</p>
+<p>為了尋求究極的解決方法，我只好去研究Unity是怎麼把IEnumerator拿來當Coroutine用的了。<br>然後經過一番研究，終於總結出了它的用法：</p>
+<ol>
+<li>IEnumerator有MoveNext這個函式和Current這個變數。</li>
+<li>Unity會不斷呼叫MoveNext來執行coroutine的程式碼，直到碰到yield敘述。<br> MoveNext如果回傳為true就代表coroutine還沒結束，反之就代表已經結束。</li>
+<li>Unity會根據Current來決定要休息多久才繼續coroutine。</li>
+</ol>
+<p>欸？…</p>
+<p><strong>MoveNext如果回傳為true就代表coroutine還沒結束，反之就代表已經結束。</strong></p>
+<p>這不就是我們要的嗎？</p>
+<img src="/2019/12/01/coroutine-1/tmp.png" class="">
+
+<p>唉，果然上層沒有提供的功能還是得自己從底層實作啊，沒想到都到Unity9102了我還要說這句話。<br>不過總之，一個究極的可中斷coroutine總算誕生了：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> IEnumerator <span class="title">RunAsInputEventListener</span>(<span class="params"><span class="keyword">this</span> IEnumerator coroutine, Action onConfirm</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">while</span> (coroutine.MoveNext())</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">if</span> (Input.GetKeyDown(KeyCode.Space))</span><br><span class="line">		&#123;</span><br><span class="line">			onConfirm.Invoke();</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;</span><br><span class="line">			<span class="keyword">yield</span> <span class="keyword">return</span> coroutine.Current;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我們透過自行控制coroutine，來避免呼叫StartCoroutine的種種麻煩。<br>有了MoveNext後，我們就能確認coroutine是否結束了，不用自己實作IsFinished。除此之外邏輯都差不多。</p>
+<p>最重要的，我們要完全模仿Unity使用coroutine的方式，才能讓我們要包裝的coroutine正常執行。<br>而模仿的最高境界就是叫Unity自己處理，所以yield return的地方我們直接回傳Current，讓Unity根據回傳值來判斷要休息多久。<br>例如最常用的yield return null，Unity會休息到下一個frame再繼續coroutine。<br>如果亂傳一通的話，有可能會發生永遠到達不了coroutine結束的事實。</p>
+<p>最後一個細節就是結尾那個yield return null，這樣寫是為了不要按一次按鍵觸發兩個事件。<br>因為這個函式結束後可能還會有其他輸入偵測，但這時KeyDown還是true，<br>所以這邊只能多等一個frame，不然直接跑下去就會繼續觸發下一個對話。</p>
+<p>以下是這個函式的一個使用範例：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">IEnumerator <span class="title">PlayDialog</span>(<span class="params"><span class="keyword">string</span> name, <span class="keyword">string</span> content</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	IEnumerator speaking = dialog.Speaking(content, name);</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">return</span> speaking.RunAsInputEventListener(() =&gt; &#123; </span><br><span class="line">		dialog.printAll(content, name);</span><br><span class="line">	&#125;);</span><br><span class="line">	<span class="keyword">yield</span> <span class="keyword">return</span> InputEvent.WaitForInputEvent();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>dialog.Speaking是顯示對話的動畫coroutine，它會一個字一個字的顯示對話。<br>呼叫RunAsInputEventListener後，會得到一個可中斷的coroutine，並且在中斷時直接printAll。</p>
+<p>至於InputEvent.WaitForInputEvent則是單純的等待，在玩家輸入前不會做任何事。</p>
+<p>玩家如果乖乖地等文字跑完，我們就等玩家按下空白鍵才播放下一個對話。<br>如果玩家在文字跑到一半就性急的按下空白鍵，則我們就直接將文字跑完，然後再等一次空白鍵才播放下一個對話。</p>
+<p>這個實現方法既不用牽扯到MonoBehaviour，也不用實體化一個class，簡潔了很多。<br>而且用法起來也方便，它就只是把coroutine包裝成另一個coroutine，底層的coroutine長甚麼樣子都無所謂。<br>而且牽扯到的class不多，所以以後不太需要回來改。只有Input看起來是最危險的，但這個可以等日後再擴增。</p>
+<p>於是，我們總算讓所有動畫都能使用中斷事件，Prefab的在天之靈也得已安息了。</p>
+<h2 id="參考資料"><a href="#參考資料" class="headerlink" title="參考資料"></a>參考資料</h2><p><a href="https://answers.unity.com/questions/233010/yield-and-coroutines-how-do-the-actually-work.html" target="_blank" rel="noopener">StackOverflow: Yield and coroutines, how do they actually work?</a><br><a href="https://read01.com/zh-tw/azn77.html#.XeKprOgzY2w" target="_blank" rel="noopener">Unity協程（Coroutine）原理深入剖析再續</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/24/alpha-blending-1/" rel="next" title="Alpha合成的錯誤打開方式">
+                <i class="fa fa-chevron-left"></i> Alpha合成的錯誤打開方式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/03/16/interpolation-0/" rel="prev" title="兩點間的內插">
+                兩點間的內插 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目錄
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            本站概覽
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">Hane</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/%7C%7C%20archive">
+              
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">文章</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#簡介"><span class="nav-number">1.</span> <span class="nav-text">簡介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#用StopCoroutine實作"><span class="nav-number">2.</span> <span class="nav-text">用StopCoroutine實作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#自己手動跑Coroutine來實現"><span class="nav-number">3.</span> <span class="nav-text">自己手動跑Coroutine來實現</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#參考資料"><span class="nav-number">4.</span> <span class="nav-text">參考資料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Hane</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 強力驅動</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主題 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+  
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        tex2jax: {
+          inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+          processEscapes: true,
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+        }
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for (i=0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+      });
+    </script>
+    <script type="text/javascript" src="//cdn.bootcss.com/mathjax/2.7.1/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  
+
+
+  
+
+  
+
+</body>
+</html>

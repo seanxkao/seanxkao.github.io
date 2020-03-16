@@ -300,19 +300,25 @@
         
           
             <h2 id="簡介"><a href="#簡介" class="headerlink" title="簡介"></a>簡介</h2><p>內插法是一種用離散的數據點產生連續變化的辦法。<br>它是遊戲中最常見的數學工具之一。可以說沒有它的話，遊戲根本做不成。</p>
-<p>為什麼？舉個例子，骨架動畫不是有關鍵影格嗎？<br>在作動畫時只要定義關鍵影格的角色動作，中間的動作就會因某種神奇力量自動出現…才怪。<br>事實上，兩個關鍵影格之間的動作就是內插出來的。<br>也就是說，假如不用內插法，我們就得手動設定每一禎所有骨頭的角度。<br>作過的人應該知道這是多麼星爆的一件事…</p>
-<p>不只是動畫，甚至連軌跡曲線、圖片的旋轉等等都是用內插實現的。<br>你能想像一張圖片得存各種旋轉角度、各種尺寸的版本嗎？<br>這樣大概一堆遊戲的容量都是10G起跳了。</p>
-<p>因此內插法節省了我們很多工夫。<br>它讓我們在記錄一個連續過程時，不需要紀錄所有中間狀態，只要存下關鍵的幾個的資料點就好。<br>今天因為是系列的第一篇，就先來介紹最簡單的情況，也就是兩點間的內插。</p>
-<h2 id="內插函數的性質"><a href="#內插函數的性質" class="headerlink" title="內插函數的性質"></a>內插函數的性質</h2><p>遊戲中的內插函數通常不會太複雜，一般都是多項式或常見函數的組合。<br>這是為了追求計算快，形式簡單。</p>
-<p>如果是3D建模的軟體，可能還會考慮稍微複雜的函數來讓形狀好看點。<br>例如3D曲面有時會使用<a href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%9D%87%E5%8C%80%E6%9C%89%E7%90%86B%E6%A0%B7%E6%9D%A1" target="_blank" rel="noopener">NURBS函數</a>。<br>但遊戲中的內插往往是每禎都要計算一次，所以不太可能用太複雜的演算法來算。</p>
-<p>此外，簡單的函數控制起來也比較容易。<br>在選擇內插函數時，通常會對函數曲線的形狀有特定的要求。<br>比如起步時是加速還是減速，曲線有多陡峭，以及過程有沒有抖動…等等。<br>因此能方便的控制速度跟加速度的函數，當然是再適合不過了。</p>
-<p>內插函數大多都是連續函數。<br>這是因為內插多半是為了來作平滑化，就像如上面提到的漸變動畫和軌跡曲線一樣。<br>你可以試著把一個滑順的動畫錄下來慢動作撥放，會發現每個影格間變化的程度一定不會太大。<br>這也就是為什麼我們常常規定內插函數要連續，甚至是多次微分連續。</p>
-<h2 id="內插函數介紹"><a href="#內插函數介紹" class="headerlink" title="內插函數介紹"></a>內插函數介紹</h2><p>內插函數的種類非常多。<br>不過為了簡單起見，今天只介紹最常見的幾個。</p>
-<p>這邊先定義一些名詞。<br>起始值：s<br>終止值：d<br>時刻：t，介於0到1之間。t越接近0則輸出越接近s，越接近1則輸出越接近d。<br>內插函數：f(s, d, t)，給定「起始值」，「終止值」以及之間的「時刻」，輸出對應的「內插值」。</p>
+<p>舉個例子，骨架動畫的關鍵影格。<br>在作動畫時，只要定義好關鍵影格的角色動作，程式就會自動幫我們產生出中間的動作。<br>事實上，兩個關鍵影格之間的動作就是內插出來的。</p>
+<p>換句話說，假如不用內插法，我們就得手動設定每一幀所有骨頭的角度。<br>作過的人應該知道這是多麼星爆的一件事…</p>
+<p>不只是動畫，甚至連軌跡曲線、圖片的旋轉等等都是用內插實現的。<br>你能想像一張圖片得存各種旋轉角度、各種尺寸的版本嗎？<br>因此內插法節省了我們很多工夫以及記憶體。<br>它讓我們在記錄一連串連續過程時，不需要紀錄所有的中間狀態，只要紀錄幾個關鍵資料點就好。</p>
+<p>今天因為是系列的第一篇，就先來介紹最簡單的情況，也就是兩點間的內插。<br>為了方便，接下來也都會以「內插函數」代稱「兩點間的內插函數」。</p>
+<h2 id="內插函數的性質"><a href="#內插函數的性質" class="headerlink" title="內插函數的性質"></a>內插函數的性質</h2><p>試著把一個滑順的動畫慢動作撥放看看，會發現每個影格間變化的程度都不會太大。<br>「滑順」在數學上其實就是連續的意思。指在很短的時間變化內，狀態也不會有太大的變化。<br>尋找兩點間的內插，其實就是在找一個通過兩點的連續函數。</p>
+<p>先來定義一些等等會用到的變數：<br>起始值：s<br>終止值：d<br>時刻：t，介於0到1之間。</p>
+<p>所謂的內插函數，就是一個函數f(s, d, t)。<br>給定「起始值」，「終止值」以及之間的「時刻」，輸出對應的「內插值」。<br>其中要符合以下三個條件：</p>
+<ol>
+<li>t=0時，輸出為s</li>
+<li>t=1時，輸出為d</li>
+<li>函數連續</li>
+</ol>
+<p>內插法在遊戲裡最常見的應用，就是讓t在一段時間內從0變成1，這樣函數的輸出值就會從s逐漸變化成d。<br>這使我們可以讓遊戲中的物件從一個狀態順暢的變化成另一個狀態。<br>無論是位移、變形、淡入淡出還是變色，都是建立在「平滑變化」的基礎上。</p>
+<h2 id="內插函數介紹"><a href="#內插函數介紹" class="headerlink" title="內插函數介紹"></a>內插函數介紹</h2><p>內插函數的種類非常多，因為他有很多可以調的性質。<br>比如是頭、中、尾的部分是要加速還是減速，陡峭還是平穩，要不要抖動…等等。<br>就像有很多配菜，每個都可以選擇加或不加一樣，組合出來的種類就非常多。<br>基本上各種場合都有最適合的內插函數。<br>甚至有人做了一個<a href="https://easings.net/" target="_blank" rel="noopener">內插函數大抄</a>的網頁來展示各種內插函數的效果。</p>
+<p>由於遊戲中的內插往往是每幀都要計算一次，遊戲中的內插函數通常都很簡單。<br>大多都是多項式或常見函數的組合。<br>如果是3D建模的軟體，可能就會考慮稍微複雜的函數來讓形狀好看點。<br>例如3D曲面有時會使用<a href="https://zh.wikipedia.org/wiki/%E9%9D%9E%E5%9D%87%E5%8C%80%E6%9C%89%E7%90%86B%E6%A0%B7%E6%9D%A1" target="_blank" rel="noopener">NURBS函數</a>。<br>這邊先來介紹幾個簡單又常見的。</p>
 <p><strong>線性內插</strong><br>$$f(s, d, t) = s + (d-s)*t$$</p>
 <img src="/2020/03/16/interpolation-0/linear.png" class="">
 
-<p>毫無反應，就是一條線。<br>但這個函數滿足內插函數最基本的要求：t=0時輸出為s，t=1時輸出為d的性質。<br>因此是最常用的內插函數。在內插時如果對函數形狀沒有特別需求，通常都會用線性內插解決。</p>
+<p>毫無反應，就是一條線。<br>因為計算簡單，這是最常用的內插函數。<br>但它最大的缺點就是開始和結束都很突然，因此不適合在某些場合使用。<br>例如，位移動畫就不太適合。因為人眼對速度的變化很敏感。<br>但顏色的變化就還好，因此淡入淡出常常都是用線性內插來實作。</p>
 <p><strong>加速內插</strong><br>$$f(s, d, t) = s + (d-s)*t^N$$</p>
 <img src="/2020/03/16/interpolation-0/accel.png" class="">
 
@@ -320,22 +326,22 @@
 <p><strong>減速內插</strong><br>$$f(s, d, t) = s + (d-s)*(1-(1-t)^N)$$</p>
 <img src="/2020/03/16/interpolation-0/decel.png" class="">
 
-<p>其中N越大減速的幅度越大。<br>可以看出來其實就是很偷懶的，把加速內插的圖形轉180度。<br>由於開始的瞬間很突然，通常會拿來做滑進畫面的動畫。</p>
+<p>其中N越大減速的幅度越大。<br>可以看出來其實就是很偷懶的把加速內插的圖形轉180度。<br>由於開始的瞬間很突然，通常會拿來做滑進畫面的動畫。</p>
 <p><strong>先加速後減速內插</strong><br>$$f(s, d, t) = s + (d-s) * \frac{1+cos(\pi*(1+t))}{2} $$</p>
 <img src="/2020/03/16/interpolation-0/acceldecel.png" class="">
 
-<p>他的名字叫AccelerateDecelerateInterpolator，可以說是Android開發者的惡夢。<br>名字長到驚天地泣鬼神，完美的展現為什麼大家討厭Java。<br>(我甚至懶得打這一串，這是直接從Android的頁面複製過來的)</p>
-<p>有些人應該已經看出來了，這些不同的內插函數其實有著相同的形式：<br>$$f(s, d, t) = s + (d-s)*g(t)$$<br>g(t)是一個介於0和1的函數。<br>也就是說我們其實可以將相同的部分提出，只留下g(t)，這個動作稱為歸一化。<br>歸一化後的內插函數稱作歸一內插函數。</p>
-<p>歸一化帶給我們很多好處。<br>首先因為輸出範圍變成了0到1，處理起來很方便。<br>我們可以任意組合兩個歸一內插函數，會得到另一個歸一內插函數。<br>並且經過任意的縮放和平移，可以把歸一內插函數變成任兩個值之間的內插函數。</p>
+<p>他的名字叫AccelerateDecelerateInterpolator，可以說是Android開發者的惡夢。<br>名字長到驚天地泣鬼神，完美的展現為什麼大家討厭Java。<br>(我甚至懶得打這一串，這是直接從Android的頁面複製過來的)<br>這個函數很常被用來作位移動畫，因為他起始和結束時，速度都是剛好為零。<br>因此整個變化過程不僅值是連續的，連速度都是連續的，做出來的動畫看上去就很舒服。</p>
+<h2 id="歸一化"><a href="#歸一化" class="headerlink" title="歸一化"></a>歸一化</h2><p>有些人應該已經看出來了，這些不同的內插函數其實有著相同的形式：<br>$$f(s, d, t) = s + (d-s)*g(t)$$<br>g(t)是一個介於0和1的函數。<br>也就是說我們其實可以將相同的部分提出，只留下g(t)，這個動作稱為歸一化。<br>歸一化後的內插函數稱作歸一內插函數。</p>
+<p>歸一化帶給我們很多好處。<br>首先輸入和輸出的範圍都變成了0到1，處理起來很方便，無論怎麼迭代範圍都會固定在0和1之間。<br>因此我們可以任意組合兩個歸一內插函數，來得到另一個歸一內插函數。<br>並且，只要經過任意的縮放和平移，就可以把歸一內插函數變成任兩個值之間的內插函數。</p>
 <p>以下是上面提到的內插函數的歸一化版本：</p>
 <p>線性內插：<br>$$g(t) = t$$</p>
 <p>加速內插：<br>$$g(t) = t^N$$</p>
 <p>減速內插：<br>$$g(t) = 1-(1-t)^N$$</p>
-<p>先加速後減速內插<br>$$g(t) = \frac{1+cos(\pi*(1+t))}{2} $$<br>抱歉…你就算歸一化還是很醜= =</p>
-<h2 id="內插函數的程式實作"><a href="#內插函數的程式實作" class="headerlink" title="內插函數的程式實作"></a>內插函數的程式實作</h2><p>這邊以一個遊戲中最常碰到的問題「如何將物體從A點順暢的移到B點」<br>來示範Unity如何實作內插函數，以及各個內插函數的使用效果。</p>
-<p>Unity自己有實作未歸一化的線性內插函數，也就是有名的Mathf.Lerp。<br>$$Lerp(s, d, t) = s + (d-s)*t$$</p>
-<p>看看這東西…長得是不是很熟悉？<br>這個東西其實就是剛才提到的，所有內插函數的共通形式。<br>只要把指定的歸一化內插函數g(t)塞進t的位置，它就變成原本的內插函數f(t)了。<br>這一點大家可以自己代代看來驗證。</p>
-<p>那麼，我們來實作剛才提到的幾個歸一化內插函數g(t)吧。</p>
+<p>先加速後減速內插<br>$$g(t) = \frac{1+cos(\pi*(1+t))}{2} $$<br>(這個東西就算歸一化還是很醜)</p>
+<h2 id="程式實作"><a href="#程式實作" class="headerlink" title="程式實作"></a>程式實作</h2><p>這邊以一個遊戲中最常碰到的內插動畫：「將物體從A點順暢的移到B點」<br>來示範Unity如何實作兩點內插函數，以及各個內插函數的使用效果。</p>
+<p>Unity自己有實作未歸一化的線性內插函數，也就是有名的Mathf.Lerp。<br>他的形式如下：<br>$$Lerp(s, d, t) = s + (d-s)*t$$</p>
+<p>這個形式感覺很熟悉…我們回頭看看剛才的「內插函數共通形式」<br>$$f(s, d, t) = s + (d-s)*g(t)$$<br>唯一的差別就只有t變成了g(t)。<br>事實上，只要把指定的歸一化內插函數g(t)塞進t的位置，它就變成原本的內插函數f(t)了。</p>
+<p>因此實作兩點內插函數的方法，就是先實作各種歸一化內插函數，然後塞進Lerp裡就成了。<br>那麼我們就來實作剛剛提過的各種歸一化內插函數吧。</p>
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">class</span> <span class="title">Interpolator</span>&#123;</span><br><span class="line">    <span class="comment">// 線性內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Linear</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> t;</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 加速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Accel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> Mathf.Pow(t, <span class="number">4</span>);</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 減速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">Decel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span>-Mathf.Pow(<span class="number">1</span>-t, <span class="number">4</span>);</span><br><span class="line">    &#125;	</span><br><span class="line">    <span class="comment">// 先加速後減速內插函數</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">float</span> <span class="title">AccelDecel</span>(<span class="params"><span class="keyword">float</span> t</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">return</span> (<span class="number">1</span>+Mathf.Cos(Mathf.PI*(<span class="number">1</span>+t)))*<span class="number">0.5f</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>接下來來實作內插動畫的函數。<br>用程式產生動畫，自然少不了coroutine。<br>這邊的實作方式是在指定的時間內，每個frame都計算目前時間對應到的內插值，再用內插值來更新物件狀態。<br>結束的時候再更新一次狀態，以確保結束的狀態正確。</p>
@@ -379,7 +385,7 @@
 <figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Start</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    StartCoroutine(Transition(startPoint, endPoint, <span class="number">3</span>, Interpolator.Accel(<span class="number">3</span>), UpdatePosX));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>這裡代表使用了加速程度是3的加速內插函數。</p>
-<h2 id="補充"><a href="#補充" class="headerlink" title="補充"></a>補充</h2><p>內插函數大抄：<a href="https://easings.net/" target="_blank" rel="noopener">https://easings.net/</a><br>內插函數生成器：<a href="http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm" target="_blank" rel="noopener">http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm</a></p>
+<h2 id="補充"><a href="#補充" class="headerlink" title="補充"></a>補充</h2><p>內插函數生成器：<a href="http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm" target="_blank" rel="noopener">http://www.timotheegroleau.com/Flash/experiments/easing_function_generator.htm</a></p>
 
           
         

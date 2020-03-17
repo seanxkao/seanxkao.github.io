@@ -79,14 +79,14 @@
 
 
 
-<meta name="description" content="前言遊戲中常常可以看到許多有趣的自然現象。比方說霧。霧的原理很簡單，因此一般遊戲引擎都有現成的。只不過這樣就太無聊了，所以今天的主題是如何用最麻煩的方式作霧。 首先我們知道在霧裡，距離越遠的東西越不清楚，太遠的地方基本上就只能看到霧的顏色。因此我們如果隨著距離降低能見度，看起來就會有霧的感覺了。 所以一個美妙的辦法就是我們每隔一段距離放一個超大的遮色片，遮住整個畫面。這樣距離越遠我們的視線就會被越">
-<meta property="og:type" content="website">
-<meta property="og:title" content="彌天大霧">
-<meta property="og:url" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;hidden&#x2F;alpha-blending-2.html">
+<meta name="description" content="四元數可以表示三度空間的旋轉狀態，那你知道複數也可以表示二度空間的旋轉狀態嗎？  用四元數表示三度空間的旋轉狀態有很多好處。其中一個最棒的點在於他不像用角度來內插，它並不會出現從359度轉到0度時，變成在繞遠路的狀況。四元數內插走的永遠是兩個狀態間「最近」的旋轉。因為太贊了，所以遊戲引擎通常都是用四元數來表示旋轉的。 於是我就在想，既然三度空間的旋轉有這麼方便的東西可以用，那二度空間呢？結果…就">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【雜談】「二元數」？">
+<meta property="og:url" content="http:&#x2F;&#x2F;seanxkao.github.io&#x2F;2020&#x2F;03&#x2F;18&#x2F;zatsudan-0&#x2F;index.html">
 <meta property="og:site_name" content="技術長的垃圾堆">
-<meta property="og:description" content="前言遊戲中常常可以看到許多有趣的自然現象。比方說霧。霧的原理很簡單，因此一般遊戲引擎都有現成的。只不過這樣就太無聊了，所以今天的主題是如何用最麻煩的方式作霧。 首先我們知道在霧裡，距離越遠的東西越不清楚，太遠的地方基本上就只能看到霧的顏色。因此我們如果隨著距離降低能見度，看起來就會有霧的感覺了。 所以一個美妙的辦法就是我們每隔一段距離放一個超大的遮色片，遮住整個畫面。這樣距離越遠我們的視線就會被越">
+<meta property="og:description" content="四元數可以表示三度空間的旋轉狀態，那你知道複數也可以表示二度空間的旋轉狀態嗎？  用四元數表示三度空間的旋轉狀態有很多好處。其中一個最棒的點在於他不像用角度來內插，它並不會出現從359度轉到0度時，變成在繞遠路的狀況。四元數內插走的永遠是兩個狀態間「最近」的旋轉。因為太贊了，所以遊戲引擎通常都是用四元數來表示旋轉的。 於是我就在想，既然三度空間的旋轉有這麼方便的東西可以用，那二度空間呢？結果…就">
 <meta property="og:locale" content="zh-tw">
-<meta property="og:updated_time" content="2019-11-27T16:45:34.103Z">
+<meta property="og:updated_time" content="2020-03-17T18:56:38.030Z">
 <meta name="twitter:card" content="summary">
 
 
@@ -117,13 +117,13 @@
 
 
 
-  <link rel="canonical" href="http://seanxkao.github.io/hidden/alpha-blending-2.html"/>
+  <link rel="canonical" href="http://seanxkao.github.io/2020/03/18/zatsudan-0/"/>
 
 
 
 
 
-  <title>彌天大霧 | 技術長的垃圾堆</title>
+  <title>【雜談】「二元數」？ | 技術長的垃圾堆</title>
   
 
 
@@ -218,41 +218,152 @@
 
   <div id="posts" class="posts-expand">
     
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://seanxkao.github.io/2020/03/18/zatsudan-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hane">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="技術長的垃圾堆">
+    </span>
+
     
-    
-    <div class="post-block page">
       <header class="post-header">
 
-	<h1 class="post-title" itemprop="name headline">彌天大霧</h1>
-
-
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
         
         
-          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>遊戲中常常可以看到許多有趣的自然現象。比方說霧。<br>霧的原理很簡單，因此一般遊戲引擎都有現成的。<br>只不過這樣就太無聊了，所以今天的主題是如何用最麻煩的方式作霧。</p>
-<p>首先我們知道在霧裡，距離越遠的東西越不清楚，太遠的地方基本上就只能看到霧的顏色。<br>因此我們如果隨著距離降低能見度，看起來就會有霧的感覺了。</p>
-<p>所以一個美妙的辦法就是我們每隔一段距離放一個超大的遮色片，遮住整個畫面。<br>這樣距離越遠我們的視線就會被越多遮色片擋住，也就達成了隨著距離降低能見度的特效了，簡單吧。</p>
-<p>我每隔距離10放一個遮色片，共放了1000個遮色片。每個的alpha值<br>可以看出來除了有些山頭上有明顯的分層，整體效果其實還不錯…如果不考慮那1000個塞滿螢幕的GameObject帶來的效能損失以外。</p>
-<h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>這個看似智障的方法其實背後是有道理的。霧其實散布在空氣中的小水滴，當我們視線被水滴擋住的時候，那部份的能見度就會下降。<br>所以用一片片透明度一樣，等距擺放的遮色片來近似霧，其實效果也還不錯。</p>
-<p>我會做這個實驗其實是有原因的。起因是因為我看到霧的能見度公式：<br>$$ \alpha = exp(-cd)$$<br>其中c是霧的濃度，d是距離。</p>
-<p>為什麼是exp呢？這邊能扯出的廢話遠多過你的想像。</p>
-<p>假設畫面上每個像素</p>
-
+          <h1 class="post-title" itemprop="name headline">【雜談】「二元數」？</h1>
         
-      </div>
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">發表於</span>
+              
+              <time title="創建於" itemprop="dateCreated datePublished" datetime="2020-03-18T01:00:34+08:00">
+                2020-03-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
       
       
+
+      
+        <blockquote>
+<p>四元數可以表示三度空間的旋轉狀態，那你知道複數也可以表示二度空間的旋轉狀態嗎？</p>
+</blockquote>
+<p>用四元數表示三度空間的旋轉狀態有很多好處。<br>其中一個最棒的點在於他不像用角度來內插，它並不會出現從359度轉到0度時，變成在繞遠路的狀況。<br>四元數內插走的永遠是兩個狀態間「最近」的旋轉。<br>因為太贊了，所以遊戲引擎通常都是用四元數來表示旋轉的。</p>
+<p>於是我就在想，既然三度空間的旋轉有這麼方便的東西可以用，那二度空間呢？<br>結果…就找到了這個<a href="http://www.paradeofrain.com/2009/07/26/interpolating-2d-rotations/" target="_blank" rel="noopener">神奇的東西</a>。</p>
+<p>懶人包就是「複數可以表示二度空間的旋轉狀態」</p>
+<p>說實在，我看過這東西後，覺得這根本就是自找麻煩。<br>因為二度空間的旋轉也就兩個方向，大不了用個判斷一下角度就知道該轉哪邊了。<br>就算退個一百步，用內建好的四元數也行啊，因為二維旋轉畢竟也是三維旋轉的一種。<br>但我覺得是一個很有趣的想法，而且它的原理跟四元數有異曲同工之妙，感覺了解它就有助於瞭解四元數。</p>
+<p>這個方法的原理，是用複數平面上的單位向量來表示二度空間的旋轉狀態。<br>複數平面上，單位圓上的值都可以用這個形式表示：<br>$$z = e^{i\theta}$$</p>
+<p>我的理解是，假如用在圓上0度的地方點一個紅點，那麼旋轉後這個點就會落在單位圓上的某處。<br>而且任一旋轉狀態下都恰好對應到該點在圓上一個可能的位置。<br>我猜這應該就是這個方法的出發點。</p>
+<p>實作的方法，是先把角度轉代進上式，得到單位複數。<br>起始角度和終止角度各會給我們一個單位複數。<br>在兩個複數間做內插，再把內插值歸一化，就得到另一個單位複數。<br>這個方法相當於在起點跟終點所連成的圓弧間做內插，所以走的當然會是近的路。(應該吧)</p>
+<p>不過要注意，直接用線性內插的話，旋轉速度非等速。(這點跟四元數內插非常類似！)<br>因此如果想要得到等速旋轉的話，還必須乘上一個權重才行。<br>至於權重怎麼算我就懶得看了，反正…誰會用這個鬼方法做2D旋轉啊。</p>
+<p>不過看完這篇後，我心裡還浮出了另一個疑問：<br>「為什麼用角度就可能會繞遠路，但用複數就可以？」<br>角度跟複數有甚麼本質上的區別，導致它們有這個差異？<br>於是我便開始了漫長的思考。</p>
+<p><strong>解釋1</strong><br>角度的定義是從x軸開始逆時鐘旋轉的夾角。<br>可以比喻成「兩個旋轉狀態的差」。<br>打個比方，0度跟359度內插，其實變成是「逆時鐘轉0度」跟「逆時鐘轉359度」作內插。<br>因此才會出現看似繞遠路的行為。<br>而複數不一樣，它本身就是「旋轉狀態」。<br>因此它的內插就會是狀態的內插，會得到最近的結果。</p>
+<p><strong>解釋2</strong><br>另一個解釋跟複數平面上的log的branch cut有關。<br>我們雖然可以用複數代表旋轉狀態，但最後如果要還原成角度，我們就得取log。<br>以剛才的式子來說：<br>$$z = e^{i\theta}$$<br>則<br>$$\theta = -i * log(z)$$<br>可是注意，這裡是沒辦法完全還原$\theta$的，因為複數平面的log並沒有辦法對應到所有可能的角度。<br>由於單位圓上的一個點有無數個角度對應到它 (一個角度加360度仍會對到同一點)<br>因此我們在取log時必須規定角度的範圍，例如-180~180度。<br>於是這邊就出現了一個尷尬的斷點。</p>
+<p>這兩個解釋其實意思差不多：「角度是旋轉狀態的失真表示法」<br>嘛，或許真的是這樣也說不定。看來複數才是真正適合表示2D旋轉的載體？<br>不過就算這樣，下次做2D遊戲時處理旋轉時，我想我還是會選擇用角度加if判斷來實作吧…</p>
+
       
     </div>
     
     
     
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/03/16/interpolation-0/" rel="next" title="【遊戲數學】 內插法1 - 兩點間的內插">
+                <i class="fa fa-chevron-left"></i> 【遊戲數學】 內插法1 - 兩點間的內插
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
   </div>
 
 
@@ -285,17 +396,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目錄
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            本站概覽
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
             
@@ -337,22 +439,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#原理"><span class="nav-number">2.</span> <span class="nav-text">原理</span></a></li></ol></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
